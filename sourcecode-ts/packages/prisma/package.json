@@ -15,6 +15,7 @@
     "prisma:db:pull:local": "dotenv -e env/.env.dev.local -- prisma db pull",
     "prisma:generate:local": "dotenv -e env/.env.dev.local -- prisma generate",
     "prisma:generate:docker": "dotenv -e env/.env.dev.docker -- prisma generate",
+    "prisma:migrate:local": "dotenv -e env/.env.dev.local -- prisma migrate dev",
     "prisma:migrate:serverless": "dotenv -e env/.env.prod.serverless -- prisma migrate deploy"
   },
   "devDependencies": {

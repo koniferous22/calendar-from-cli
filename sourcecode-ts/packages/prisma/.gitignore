@@ -1,0 +1,2 @@
+!env/.env.dev.local
+!env/.env.dev.docker

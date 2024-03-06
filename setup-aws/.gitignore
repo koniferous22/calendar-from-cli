@@ -42,9 +42,12 @@ terraform.rc
 # └─────────────┘
 
 # Terraform plan output
-*tfplan*
+**/tfplan/*
+!tfplan/.gitkeep
 
 # Temp directory for zipfiles containing app build
 
 /.deploy
+!/.deploy/.gitkeep
 /.lambda-layers
+!/.lambda-layers/.gitkeep

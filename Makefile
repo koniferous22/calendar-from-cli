@@ -1,27 +1,3 @@
-DOCKER_COMPOSE_DOT_ENV := $(CURDIR)/local-setup-docker-compose/env/.env.dev.docker
-# Out of date
-API_ADMIN_DOT_ENV := $(CURDIR)/src/api/admin/env/.env
-
-# ┌────────┐
-# │        │
-# │ config │
-# │        │
-# └────────┘
-
-# Config init
-# 
-
-# envfiles-init:
-# 	cp -n $(DOCKER_COMPOSE_DOT_ENV).docker.example $(DOCKER_COMPOSE_DOT_ENV)
-# 	cp -n $(DB_DOT_ENV).db.example $(DB_DOT_ENV)
-# 	cp -n $(API_ADMIN_DOT_ENV).prisma.example $(API_ADMIN_DOT_ENV)
-
-# Note: double check 'cp -n' behaviour and shit
-
-validate-envfiles:
-	test -f $(DOCKER_COMPOSE_DOT_ENV) || (echo "docker-compose .env is not a file"; exit 1)
-	test -f $(API_ADMIN_DOT_ENV)      || (echo "api-admin .env is not a file"; exit 1)
-
 # ┌───────────┐
 # │           │
 # │ setup-aws │
@@ -56,6 +32,9 @@ aws-build-lambda-layers:
 	yarn --cwd $(CURDIR)/sourcecode-ts aws:build-lambda-layer:node-modules
 	yarn --cwd $(CURDIR)/sourcecode-ts aws:build-lambda-layer:prisma
 
+aws-build-webapp:
+	yarn --cwd $(CURDIR)/sourcecode-ts web:build:serverless
+
 cleanup-deploy-directory:
 	rm $(CURDIR)/setup-aws/.deploy/*
 
@@ -64,6 +43,8 @@ cleanup-deploy-directory:
 # │ local-setup-docker-compose │
 # │                            │
 # └────────────────────────────┘
+
+DOCKER_COMPOSE_DOT_ENV := $(CURDIR)/local-setup-docker-compose/env/.env.dev.docker
 
 dc-up-db:
 	docker compose --env-file $(DOCKER_COMPOSE_DOT_ENV) -p calendar-from-cli -f $(CURDIR)/local-setup-docker-compose/config/db.docker-compose.yml up --build
@@ -98,15 +79,6 @@ dc-down-webapp:
 # │               │
 # └───────────────┘
 
-ts-fmt:
-	yarn --cwd $(CURDIR)/sourcecode-ts fmt
-
-prisma-db-pull-local:
-	yarn --cwd $(CURDIR)/sourcecode-ts prisma:db:pull:local
-
-prisma-migrate-serverless:
-	yarn --cwd $(CURDIR)/sourcecode-ts prisma:migrate:serverless
-
 api-admin-deps-watch:
 	yarn --cwd $(CURDIR)/sourcecode-ts api-admin:deps:watch
 
@@ -119,8 +91,31 @@ api-public-deps-watch:
 api-public-dev:
 	yarn --cwd $(CURDIR)/sourcecode-ts api-public:dev
 
+prisma-db-pull-local:
+	yarn --cwd $(CURDIR)/sourcecode-ts prisma:db:pull:local
+
+prisma-migrate-local:
+	yarn --cwd $(CURDIR)/sourcecode-ts prisma:migrate:local
+
+prisma-migrate-serverless:
+	yarn --cwd $(CURDIR)/sourcecode-ts prisma:migrate:serverless
+
 storybook:
 	yarn --cwd $(CURDIR)/sourcecode-ts ui-components:storybook
+
+ts-fmt:
+	yarn --cwd $(CURDIR)/sourcecode-ts fmt
+
+# Note - packages are ordered based on dependency graph
+ts-packages-build:
+	yarn --cwd $(CURDIR)/sourcecode-ts prisma:build:local
+	yarn --cwd $(CURDIR)/sourcecode-ts validation-lib:build
+	yarn --cwd $(CURDIR)/sourcecode-ts calendar-utils:build
+	yarn --cwd $(CURDIR)/sourcecode-ts common-config:build
+	yarn --cwd $(CURDIR)/sourcecode-ts secrets:build
+	yarn --cwd $(CURDIR)/sourcecode-ts db-queries:build
+	yarn --cwd $(CURDIR)/sourcecode-ts backend-lib:build
+	yarn --cwd $(CURDIR)/sourcecode-ts ui-components:build
 
 unit-test:
 	yarn --cwd $(CURDIR)/sourcecode-ts test
