@@ -1,0 +1,27 @@
+{
+  "name": "@calendar-from-cli/validation-lib",
+  "version": "1.0.0",
+  "description": "Validation utils for 'calendar-from-cli' project",
+  "main": "build/index.js",
+  "repository": "https://github.com/koniferous22/calendar-from-cli",
+  "author": "koniferous22",
+  "license": "AGPL-3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build-cleanup": "rm -rf build && rm -rf *tsconfig.tsbuildinfo",
+    "build": "yarn build-cleanup && tsc",
+    "build:watch": "tsc -w"
+  },
+  "devDependencies": {
+    "date-fns": "^2",
+    "date-fns-tz": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.8.1",
+    "@types/validator": "^13.11.7",
+    "validator": "^13.11.0",
+    "zod": "^3.22.4"
+  }
+}

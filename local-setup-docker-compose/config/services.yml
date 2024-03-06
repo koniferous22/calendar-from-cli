@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres:${POSTGRES_IMAGE_TAG}
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - target: 5432
+        published: 5432
+  pgadmin:
+    image: dpage/pgadmin4:${PGADMIN_IMAGE_TAG}
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - target: 5433
+        published: 5433
+  cassandra-calendar-kv:
+    image: cassandra:${CASSANDRA_IMAGE_TAG}
+    restart: always
+    ports:
+      - target: 9042
+        published: 9042
+  api-admin:
+    build:
+      context: ../..
+      dockerfile: ./sourcecode-ts/api/admin/image/Dockerfile
+      args:
+        IMAGE_TAG: ${API_ADMIN_NODEJS_IMAGE_TAG}
+    ports:
+      - target: 3000
+        published: 3000
+  webapp-api-public:
+    build:
+      context: ../..
+      dockerfile: ./sourcecode-ts/web/image/Dockerfile
+      target: build-api-public
+      args:
+        IMAGE_TAG: ${WEBAPP_NODEJS_IMAGE_TAG}
+    ports:
+      - target: 3001
+        published: 3001
+  webapp:
+    build:
+      # Note - global ctx used because of build-time dependency on global configuration, due to webapp bundling
+      context: ../..
+      dockerfile: ./sourcecode-ts/web/image/Dockerfile
+      target: build-web
+      args:
+        IMAGE_TAG: ${WEBAPP_NODEJS_IMAGE_TAG}
+    ports:
+      - target: 4173
+        published: 3002

@@ -1,0 +1,9 @@
+#!/usr/bin/sh
+set -euo pipefail
+
+lambda_fn_name="calendar_jobMigratePast"
+project_path=$(realpath "$(dirname "$0")/../../../..")
+zip_output="$project_path/setup-aws/.deploy/$lambda_fn_name.zip"
+aws lambda update-function-code \
+    --function-name "$lambda_fn_name" \
+    --zip-file "fileb://$zip_output"

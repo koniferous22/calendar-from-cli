@@ -1,0 +1,29 @@
+{
+  "name": "@calendar-from-cli/prisma",
+  "version": "1.0.0",
+  "description": "Prisma utils",
+  "main": "build/index.js",
+  "repository": "https://github.com/koniferous22/calendar-from-cli",
+  "author": "koniferous22",
+  "license": "AGPL-3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build-cleanup": "rm -rf build && rm -rf *tsconfig.tsbuildinfo",
+    "build:local": "yarn build-cleanup && yarn prisma:generate:local && tsc",
+    "build:docker": "yarn build-cleanup && yarn prisma:generate:docker && tsc",
+    "prisma:db:pull:local": "dotenv -e env/.env.dev.local -- prisma db pull",
+    "prisma:generate:local": "dotenv -e env/.env.dev.local -- prisma generate",
+    "prisma:generate:docker": "dotenv -e env/.env.dev.docker -- prisma generate",
+    "prisma:migrate:serverless": "dotenv -e env/.env.prod.serverless -- prisma migrate deploy"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^7.3.0",
+    "prisma": "^5.8.1",
+    "typescript": "^5.3.3",
+    "zod": "^3.22.4"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.8.1"
+  }
+}

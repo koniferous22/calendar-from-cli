@@ -1,0 +1,12 @@
+{
+  "uiErrorHandling": {
+    "routerErrorBoundary": {
+      "errorText404": "This page doesn't exist!",
+      "errorText403": "You are not authorized to view this page",
+      "errorFallback": "Something went wrong!"
+    },
+    "renderingErrorBoundary": {
+      "errorFallback": "Something went wrong!"
+    }
+  }
+}

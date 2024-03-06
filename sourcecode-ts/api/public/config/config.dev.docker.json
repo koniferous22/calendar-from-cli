@@ -1,0 +1,19 @@
+{
+  "server": {
+    "stderrLogging": true
+  },
+  "cors": {
+    "enabled": true,
+    "whitelist": ["http://localhost:3002", "https://localhost:3002"]
+  },
+  "jobs": {
+    "migratePast": {
+      "enabledMiddlewareTriggers": {
+        "calendarRouter": {
+          "publicCalendarListProcedure": true,
+          "calendarListProcedure": true
+        }
+      }
+    }
+  }
+}

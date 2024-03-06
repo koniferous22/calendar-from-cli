@@ -1,0 +1,40 @@
+{
+  "auth": {
+    "modal": {
+      "shouldDisallowClosing": true
+    },
+    "refreshTokenImplementation": "cookieHeader"
+  },
+  "calendar": {
+    "header": {
+      "arrowKeyboardEventDebounce": 200,
+      "viewSettingsBar": {
+        "sameTimezoneText": "You are in the same timezone as calendar owner"
+      }
+    },
+    "renderingOptions": {
+      "cellView": {
+        "minCalendarEventHeightPx": 30,
+        "minimumDayCellCapacity": 4
+      },
+      "laneView": {
+        "eventSizeResolution": "duration",
+        "itemBreakpointsInMinutes": {
+          "minLengthForDisplayDuration": 50,
+          "minLengthForDisplayTitle": 25
+        }
+      }
+    },
+    "syncCurrentTimeFrequencySeconds": 30,
+    "calendarDataRefetchFrequencySeconds": 30
+  },
+  "defaultWebAppSettings": {
+    "theme": "lagoon",
+    "secretLinkText": "Secret Link"
+  },
+  "iconHref": "./planner_application_calendar_3059.ico",
+  "pageLoader": "headerIcon",
+  "secretLinkHref": "https://www.youtube.com/watch?v=yzyhWGAhuvg",
+  "title": "Calendar App",
+  "publicApi": "http://localhost:3001"
+}

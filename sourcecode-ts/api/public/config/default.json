@@ -1,0 +1,50 @@
+{
+  "server": {
+    "port": 3001,
+    "stderrLogging": false,
+    "bodyParserMiddleware": false
+  },
+  "cors": {
+    "enabled": false
+  },
+  "auth": {
+    "refreshToken": {
+      "implementation": {
+        "type": "cookieHeader",
+        "cookieKey": "refreshToken",
+        "cookieAttributes": {
+          "httpOnly": true,
+          "secure": true,
+          "path": "/trustedViewer.refreshToken"
+        }
+      },
+      "expirationPeriodSeconds": 172800,
+      "opts": {
+        "randomBytesLength": 32,
+        "bcryptSaltRounds": 9
+      }
+    },
+    "accessToken": {
+      "expirationPeriodSeconds": 3600
+    }
+  },
+  "jobs": {
+    "migratePast": {
+      "jobSettings": {
+        "shouldCheckForCorruptDbState": true
+      },
+      "enabledMiddlewareTriggers": {
+        "calendarRouter": {
+          "publicCalendarListProcedure": false,
+          "calendarListProcedure": false
+        }
+      }
+    }
+  },
+  "secrets": {
+    "jwtSecret": {
+      "type": "env",
+      "envVariable": "JWT_SECRET"
+    }
+  }
+}

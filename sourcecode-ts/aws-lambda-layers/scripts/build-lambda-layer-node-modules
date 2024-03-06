@@ -1,0 +1,31 @@
+#!/usr/bin/sh
+set -euo pipefail
+
+lambda_layer_name="nodeModules"
+project_path=$(realpath "$(dirname "$0")/../../..")
+lambda_layer_root="$project_path/setup-aws/.lambda-layers/$lambda_layer_name"
+zip_output="$project_path/setup-aws/.deploy/calendar_lambdaLayer_$lambda_layer_name.zip"
+echo "Cleaning up previous Lambda layer build"
+rm -rf "$lambda_layer_root"
+
+echo "Building Layer"
+mkdir -p "$lambda_layer_root/nodejs/node_modules"
+yarn --cwd "$project_path/sourcecode-ts" backend-lib-ws install --modules-folder "$lambda_layer_root/nodejs/node_modules" --production
+yarn --cwd "$project_path/sourcecode-ts" api-admin-ws install --modules-folder "$lambda_layer_root/nodejs/node_modules" --production
+yarn --cwd "$project_path/sourcecode-ts" api-public-ws install --modules-folder "$lambda_layer_root/nodejs/node_modules" --production
+
+echo "Cleaning up redundant packages"
+# https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html
+
+# Included in "libs" lambda layer
+rm -rf "$lambda_layer_root/nodejs/node_modules/@calendar-from-cli"
+# Included in "prisma" lambda layer
+rm -rf "$lambda_layer_root/nodejs/node_modules/@prisma"
+rm -rf "$lambda_layer_root/nodejs/node_modules/.prisma"
+
+echo "Compressing into .zip format"
+# Changing directory to preserve relative paths, for correct lambda layer mapping
+rm -f "$zip_output"
+pushd "$lambda_layer_root" >/dev/null
+zip -r "$zip_output" "."
+popd >/dev/null

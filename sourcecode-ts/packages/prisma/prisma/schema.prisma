@@ -1,0 +1,488 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  // Url distinction because of serverless connection pooling
+  // https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections#serverless-environments-faas
+  url       = env("CALENDAR_DATABASE_URL")
+  directUrl = env("DIRECT_CALENDAR_DATABASE_URL")
+}
+
+model AppointmentBooking {
+  Id                                 Int                                  @id @default(autoincrement())
+  CreatedAt                          DateTime                             @db.Timestamp(6)
+  UpdatedAt                          DateTime                             @db.Timestamp(6)
+  Title                              String                               @db.VarChar(250)
+  State                              AppointmentBookingState
+  RequestorEmail                     String?                              @db.VarChar(255)
+  RequestorPhone                     String?                              @db.VarChar(20)
+  RequestorMessage                   String?                              @db.VarChar(1000)
+  RequestorIANATimezone              String?                              @db.VarChar(255)
+  SuggestedTime                      DateTime                             @db.Timestamp(6)
+  SuggestedDuration                  Int                                  @db.SmallInt
+  AppointmentBookingCancellationLink AppointmentBookingCancellationLink[]
+  AppointmentBookingRescheduleLink   AppointmentBookingRescheduleLink[]
+  EventSourceReference               EventSourceReference[]
+}
+
+model AppointmentBookingCancellationLink {
+  Id                   Int                @id @default(autoincrement())
+  AppointmentBookingId Int
+  ExpirationTime       DateTime           @db.Timestamp(6)
+  Active               Boolean            @default(true)
+  TokenHash            String             @db.VarChar
+  AppointmentBooking   AppointmentBooking @relation(fields: [AppointmentBookingId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model AppointmentBookingRescheduleLink {
+  Id                   Int                @id @default(autoincrement())
+  AppointmentBookingId Int
+  ExpirationTime       DateTime           @db.Timestamp(6)
+  Active               Boolean            @default(true)
+  TokenHash            String             @db.VarChar
+  AppointmentBooking   AppointmentBooking @relation(fields: [AppointmentBookingId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model AtomicCalendarViewVersion {
+  Id                        Int                         @id @default(autoincrement())
+  UpdatedAt                 DateTime                    @db.Timestamp(6)
+  RecurringEventInstance    RecurringEventInstance[]
+  RecurringEventInstanceSet RecurringEventInstanceSet[]
+}
+
+model Event {
+  Id                         Int                  @id @default(autoincrement())
+  CreatedAt                  DateTime             @db.Timestamp(6)
+  UpdatedAt                  DateTime             @db.Timestamp(6)
+  EventSourceReferenceId     Int                  @unique
+  EventState                 EventState
+  TransparencyScope          TransparencyScope
+  Title                      String               @db.VarChar(250)
+  Description                String               @db.VarChar(5000)
+  DescriptionFormat          DescriptionFormat
+  ProtectedTitle             String               @db.VarChar(250)
+  ProtectedDescription       String               @db.VarChar(5000)
+  ProtectedDescriptionFormat DescriptionFormat
+  PublicTitle                String               @db.VarChar(250)
+  PublicDescription          String               @db.VarChar(5000)
+  PublicDescriptionFormat    DescriptionFormat
+  Notifications              Int[]                @default([]) @db.SmallInt
+  EventTagId                 Int?
+  Duration                   Int                  @db.SmallInt
+  ScheduledAtUTC             DateTime             @db.Timestamp(6)
+  EndsAtUTC                  DateTime             @db.Timestamp(6)
+  Metadata                   Json?
+  EventSourceReference       EventSourceReference @relation(fields: [EventSourceReferenceId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  EventTag                   EventTag?            @relation(fields: [EventTagId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model EventIntegrationSourceReference {
+  Id                          Int                        @id @default(autoincrement())
+  EventIntegrationSourceType  EventIntegrationSourceType
+  CalDAVIntegrationId         Int?
+  GoogleCalendarIntegrationId Int?
+  GoogleCalendarIntegration   GoogleCalendarIntegration? @relation(fields: [GoogleCalendarIntegrationId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "EventIntegrationSourceReferenc_GoogleCalendarIntegrationId_fkey")
+  EventSourceReference        EventSourceReference[]
+}
+
+model EventSourceReference {
+  Id                                 Int                               @id @default(autoincrement())
+  EventSourceType                    EventSourceType
+  EventIntegrationSourceReferenceId  Int?
+  EventTemplateId                    Int?
+  ProcessItemAttachmentId            Int?
+  AppointmentBookingId               Int?
+  RecurringEventInstanceConversionId Int?
+  Event                              Event?
+  AppointmentBooking                 AppointmentBooking?               @relation(fields: [AppointmentBookingId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  EventIntegrationSourceReference    EventIntegrationSourceReference?  @relation(fields: [EventIntegrationSourceReferenceId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  EventTemplate                      EventTemplate?                    @relation(fields: [EventTemplateId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  ProcessItemAttachment              ProcessItemAttachment?            @relation(fields: [ProcessItemAttachmentId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  RecurringEventInstanceConversion   RecurringEventInstanceConversion? @relation(fields: [RecurringEventInstanceConversionId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model EventTag {
+  Id                              Int                               @id @default(autoincrement())
+  CreatedAt                       DateTime                          @db.Timestamp(6)
+  UpdatedAt                       DateTime                          @db.Timestamp(6)
+  Alias                           String                            @unique @db.VarChar(100)
+  Color                           Int                               @unique
+  Event                           Event[]
+  EventTemplate                   EventTemplate[]
+  IntegrationMirrorEventDefaults  IntegrationMirrorEventDefaults[]
+  Process                         Process[]
+  ProcessTemplate                 ProcessTemplate[]
+  RecurringEvent                  RecurringEvent[]
+  TrustedViewerEventTagPermission TrustedViewerEventTagPermission[]
+}
+
+model EventTemplate {
+  Id                            Int                             @id @default(autoincrement())
+  CreatedAt                     DateTime                        @db.Timestamp(6)
+  UpdatedAt                     DateTime                        @db.Timestamp(6)
+  Alias                         String                          @unique @db.VarChar(100)
+  TransparencyScope             TransparencyScope
+  Title                         String                          @db.VarChar(250)
+  Description                   String                          @db.VarChar(5000)
+  DescriptionFormat             DescriptionFormat
+  ProtectedTitle                String?                         @db.VarChar(250)
+  ProtectedDescription          String?                         @db.VarChar(5000)
+  ProtectedDescriptionFormat    DescriptionFormat?
+  PublicTitle                   String?                         @db.VarChar(250)
+  PublicDescription             String?                         @db.VarChar(5000)
+  PublicDescriptionFormat       DescriptionFormat?
+  Notifications                 Int[]                           @default([]) @db.SmallInt
+  EventTagId                    Int?
+  Duration                      Int                             @db.SmallInt
+  Metadata                      Json?
+  EventSourceReference          EventSourceReference[]
+  EventTag                      EventTag?                       @relation(fields: [EventTagId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  ProcessTemplateItem           ProcessTemplateItem[]
+  RecurringEventSourceReference RecurringEventSourceReference[]
+}
+
+model GoogleCalendarIntegration {
+  Id                               Int                               @id(map: "GoogleC_pkey") @default(autoincrement())
+  CreatedAt                        DateTime                          @db.Timestamp(6)
+  UpdatedAt                        DateTime                          @db.Timestamp(6)
+  IntegrationName                  String                            @db.VarChar(100)
+  IntegrationMirrorEventDefaultsId Int
+  ApiVersion                       String                            @db.VarChar(4)
+  CalendarId                       String                            @db.VarChar(255)
+  Scopes                           String[]                          @db.VarChar(20)
+  ServiceAccKey                    Json
+  EventIntegrationSourceReference  EventIntegrationSourceReference[]
+  IntegrationMirrorEventDefaults   IntegrationMirrorEventDefaults    @relation(fields: [IntegrationMirrorEventDefaultsId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model HistoricEvent {
+  Id                         Int                      @id @default(autoincrement())
+  MigratedAt                 DateTime                 @db.Timestamp(6)
+  Title                      String                   @db.VarChar(250)
+  Description                String                   @db.VarChar(5000)
+  DescriptionFormat          DescriptionFormat
+  ProtectedTitle             String                   @db.VarChar(250)
+  ProtectedDescription       String                   @db.VarChar(5000)
+  ProtectedDescriptionFormat DescriptionFormat
+  PublicTitle                String                   @db.VarChar(250)
+  PublicDescription          String                   @db.VarChar(5000)
+  PublicDescriptionFormat    DescriptionFormat
+  ScheduledAtUTC             DateTime                 @db.Timestamp(6)
+  EndedAtUTC                 DateTime                 @db.Timestamp(6)
+  Duration                   Int                      @db.SmallInt
+  EventTagSnapshotAlias      String?                  @db.VarChar(100)
+  EventTagSnapshotColor      Int?
+  HistoricProcessSnapshotId  Int?
+  HistoricProcessSnapshot    HistoricProcessSnapshot? @relation(fields: [HistoricProcessSnapshotId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model HistoricProcessSnapshot {
+  Id                         Int               @id @default(autoincrement())
+  TakenAt                    DateTime          @db.Timestamp(6)
+  Title                      String            @db.VarChar(250)
+  Description                String            @db.VarChar(5000)
+  DescriptionFormat          DescriptionFormat
+  ProtectedTitle             String            @db.VarChar(250)
+  ProtectedDescription       String            @db.VarChar(5000)
+  ProtectedDescriptionFormat DescriptionFormat
+  PublicTitle                String            @db.VarChar(250)
+  PublicDescription          String            @db.VarChar(5000)
+  PublicDescriptionFormat    DescriptionFormat
+  OriginalStartsAtUTC        DateTime          @db.Timestamp(6)
+  ProcessColor               Int?
+  HistoricEvent              HistoricEvent[]
+  Process                    Process[]
+}
+
+model IntegrationMirrorEventDefaults {
+  Id                         Int                         @id @default(autoincrement())
+  TransparencyScope          TransparencyScope
+  ProtectedTitle             String?                     @db.VarChar(250)
+  ProtectedDescription       String?                     @db.VarChar(5000)
+  ProtectedDescriptionFormat DescriptionFormat?
+  PublicTitle                String?                     @db.VarChar(250)
+  PublicDescription          String?                     @db.VarChar(5000)
+  PublicDescriptionFormat    DescriptionFormat?
+  Notifications              Int[]                       @default([]) @db.SmallInt
+  EventTagId                 Int?
+  GoogleCalendarIntegration  GoogleCalendarIntegration[]
+  EventTag                   EventTag?                   @relation(fields: [EventTagId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model MigratePastJobRun {
+  Id         Int      @id @default(autoincrement())
+  ExecutedAt DateTime @db.Timestamp(6)
+}
+
+model Process {
+  Id                              Int                      @id @default(autoincrement())
+  CreatedAt                       DateTime                 @db.Timestamp(6)
+  UpdatedAt                       DateTime                 @db.Timestamp(6)
+  ProcessSourceReferenceId        Int
+  LatestHistoricProcessSnapshotId Int?
+  ProcessState                    ProcessState
+  TransparencyScope               TransparencyScope
+  Title                           String                   @db.VarChar(250)
+  Description                     String                   @db.VarChar(5000)
+  DescriptionFormat               DescriptionFormat
+  ProtectedTitle                  String                   @db.VarChar(250)
+  ProtectedDescription            String                   @db.VarChar(5000)
+  ProtectedDescriptionFormat      DescriptionFormat
+  PublicTitle                     String                   @db.VarChar(250)
+  PublicDescription               String                   @db.VarChar(5000)
+  PublicDescriptionFormat         DescriptionFormat
+  Notifications                   Int[]                    @default([]) @db.SmallInt
+  EventTagId                      Int?
+  ScheduleBaselineUTC             DateTime                 @db.Timestamp(6)
+  StartsAtUTC                     DateTime                 @db.Timestamp(6)
+  ProcessColor                    Int?
+  EventTag                        EventTag?                @relation(fields: [EventTagId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  HistoricProcessSnapshot         HistoricProcessSnapshot? @relation(fields: [LatestHistoricProcessSnapshotId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  ProcessSourceReference          ProcessSourceReference   @relation(fields: [ProcessSourceReferenceId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  ProcessItemAttachment           ProcessItemAttachment[]
+}
+
+model ProcessItemAttachment {
+  Id                            Int                    @id @default(autoincrement())
+  CreatedAt                     DateTime               @db.Timestamp(6)
+  UpdatedAt                     DateTime               @db.Timestamp(6)
+  ProcessId                     Int
+  IsActive                      Boolean
+  Index                         Int                    @db.SmallInt
+  ItemOffset                    Json
+  CalculatedItemOffsetInMinutes Int
+  EventSourceReference          EventSourceReference[]
+  Process                       Process                @relation(fields: [ProcessId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([ProcessId, ItemOffset])
+}
+
+model ProcessSourceReference {
+  Id                Int               @id @default(autoincrement())
+  ProcessSourceType ProcessSourceType
+  ProcessTemplateId Int?
+  Process           Process[]
+  ProcessTemplate   ProcessTemplate?  @relation(fields: [ProcessTemplateId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model ProcessTemplate {
+  Id                         Int                      @id @default(autoincrement())
+  CreatedAt                  DateTime                 @db.Timestamp(6)
+  UpdatedAt                  DateTime                 @db.Timestamp(6)
+  Alias                      String                   @unique @db.VarChar(100)
+  TransparencyScope          TransparencyScope
+  Title                      String                   @db.VarChar(250)
+  Description                String                   @db.VarChar(5000)
+  DescriptionFormat          DescriptionFormat
+  ProtectedTitle             String?                  @db.VarChar(250)
+  ProtectedDescription       String?                  @db.VarChar(5000)
+  ProtectedDescriptionFormat DescriptionFormat?
+  PublicTitle                String?                  @db.VarChar(250)
+  PublicDescription          String?                  @db.VarChar(5000)
+  PublicDescriptionFormat    DescriptionFormat?
+  Notifications              Int[]                    @default([]) @db.SmallInt
+  EventTagId                 Int?
+  ProcessColor               Int?
+  ProcessSourceReference     ProcessSourceReference[]
+  EventTag                   EventTag?                @relation(fields: [EventTagId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  ProcessTemplateItem        ProcessTemplateItem[]
+}
+
+model ProcessTemplateItem {
+  Id                Int             @id @default(autoincrement())
+  ProcessTemplateId Int
+  Index             Int             @db.SmallInt
+  ItemOffset        Json
+  EventTemplateId   Int
+  ProcessTemplate   ProcessTemplate @relation(fields: [ProcessTemplateId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "ProcessTemplateEntry_ProcessTemplateId_fkey")
+  EventTemplate     EventTemplate   @relation(fields: [EventTemplateId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([ProcessTemplateId, Index])
+}
+
+model RecurringEvent {
+  Id                              Int                           @id @default(autoincrement())
+  CreatedAt                       DateTime                      @db.Timestamp(6)
+  UpdatedAt                       DateTime                      @db.Timestamp(6)
+  RecurringEventSourceReferenceId Int                           @unique
+  RecurringEventState             RecurringEventState
+  TransparencyScope               TransparencyScope
+  Title                           String                        @db.VarChar(250)
+  Description                     String                        @db.VarChar(5000)
+  DescriptionFormat               DescriptionFormat
+  ProtectedTitle                  String                        @db.VarChar(250)
+  ProtectedDescription            String                        @db.VarChar(5000)
+  ProtectedDescriptionFormat      DescriptionFormat
+  PublicTitle                     String                        @db.VarChar(250)
+  PublicDescription               String                        @db.VarChar(5000)
+  PublicDescriptionFormat         DescriptionFormat
+  Notifications                   Int[]                         @default([]) @db.SmallInt
+  EventTagId                      Int?
+  Duration                        Int                           @db.SmallInt
+  Recurrence                      Json
+  BaselineUTCSchedule             DateTime                      @db.Timestamp(6)
+  Metadata                        Json?
+  EventTag                        EventTag?                     @relation(fields: [EventTagId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  RecurringEventSourceReference   RecurringEventSourceReference @relation(fields: [RecurringEventSourceReferenceId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  RecurringEventInstance          RecurringEventInstance[]
+}
+
+model RecurringEventInstance {
+  Id                                  Int                                   @id @default(autoincrement())
+  RecurringEventId                    Int
+  AtomicCalendarViewVersionId         Int
+  RecurringEventInstanceConversionId  Int?
+  OffsetFromBaselineDays              Int                                   @db.SmallInt
+  ScheduledAtUTC                      DateTime                              @db.Timestamp(6)
+  EndsAtUTC                           DateTime                              @db.Timestamp(6)
+  AtomicCalendarViewVersion           AtomicCalendarViewVersion             @relation(fields: [AtomicCalendarViewVersionId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  RecurringEvent                      RecurringEvent                        @relation(fields: [RecurringEventId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  RecurringEventInstanceConversion    RecurringEventInstanceConversion?     @relation(fields: [RecurringEventInstanceConversionId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  RecurringEventInstanceSetMembership RecurringEventInstanceSetMembership[]
+
+  @@unique([RecurringEventId, AtomicCalendarViewVersionId, OffsetFromBaselineDays])
+}
+
+model RecurringEventInstanceConversion {
+  Id                                Int                      @id @default(autoincrement())
+  ConvertedAt                       DateTime                 @db.Timestamp(6)
+  InheritedRecurringEventSourceType RecurringEventSourceType
+  InheritedEventTemplateId          Int?
+  EventSourceReference              EventSourceReference[]
+  RecurringEventInstance            RecurringEventInstance[]
+}
+
+model RecurringEventInstanceSet {
+  Id                                  Int                                   @id @default(autoincrement())
+  AtomicCalendarViewVersionId         Int
+  IntervalFromUTC                     DateTime                              @db.Timestamp(6)
+  IntervalToUTC                       DateTime                              @db.Timestamp(6)
+  AtomicCalendarViewVersion           AtomicCalendarViewVersion             @relation(fields: [AtomicCalendarViewVersionId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  RecurringEventInstanceSetMembership RecurringEventInstanceSetMembership[]
+
+  @@unique([AtomicCalendarViewVersionId, IntervalFromUTC, IntervalToUTC])
+}
+
+model RecurringEventInstanceSetMembership {
+  Id                          Int                       @id @default(autoincrement())
+  RecurringEventInstanceSetId Int
+  RecurringEventInstanceId    Int
+  RecurringEventInstanceSet   RecurringEventInstanceSet @relation(fields: [RecurringEventInstanceSetId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "RecurringEventInstanceSetMembe_RecurringEventInstanceSetId_fkey")
+  RecurringEventInstance      RecurringEventInstance    @relation(fields: [RecurringEventInstanceId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "RecurringEventInstanceSetMembersh_RecurringEventInstanceId_fkey")
+
+  @@unique([RecurringEventInstanceSetId, RecurringEventInstanceId], map: "RecurringEventInstanceSetMemb_RecurringEventInstanceSetId_R_key")
+}
+
+model RecurringEventSourceReference {
+  Id                       Int                      @id @default(autoincrement())
+  RecurringEventSourceType RecurringEventSourceType
+  EventTemplateId          Int?
+  RecurringEvent           RecurringEvent?
+  EventTemplate            EventTemplate?           @relation(fields: [EventTemplateId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model TrustedViewer {
+  Id                                 Int                               @id(map: "TrustedViewerToken_pkey") @default(autoincrement())
+  Alias                              String                            @unique(map: "TrustedViewerToken_Alias_key") @db.VarChar(100)
+  ViewerUuid                         String                            @unique @db.Uuid
+  Active                             Boolean                           @default(true)
+  PasswordHash                       String                            @db.VarChar
+  RefreshTokenRandomHash             String?                           @db.VarChar
+  DefaultEventTagAccess              TrustedViewerEventTagAccess
+  TrustedViewerCalendarPermissionsId Int
+  GrantExpiresAt                     DateTime?                         @db.Timestamp(6)
+  WebAppSettings                     Json?
+  TrustedViewerCalendarPermissions   TrustedViewerCalendarPermissions  @relation(fields: [TrustedViewerCalendarPermissionsId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  TrustedViewerEventTagPermission    TrustedViewerEventTagPermission[]
+}
+
+model TrustedViewerCalendarPermissions {
+  Id                        Int             @id @default(autoincrement())
+  CanSeeTags                Boolean
+  CanSeeProcessAssociations Boolean
+  CanViewPast               Boolean
+  CanSwitchToPublicView     Boolean
+  TrustedViewer             TrustedViewer[]
+}
+
+model TrustedViewerEventTagPermission {
+  Id              Int                         @id @default(autoincrement())
+  TrustedViewerId Int
+  EventTagId      Int
+  EventTagAccess  TrustedViewerEventTagAccess
+  EventTag        EventTag                    @relation(fields: [EventTagId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+  TrustedViewer   TrustedViewer               @relation(fields: [TrustedViewerId], references: [Id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([TrustedViewerId, EventTagId])
+}
+
+enum AppointmentBookingState {
+  Requested
+  Rejected
+  Confirmed
+  Cancelled
+  RescheduleRequested
+  RescheduleConfirmed
+  Done
+}
+
+enum DescriptionFormat {
+  Plaintext
+  Markdown
+}
+
+enum EventIntegrationSourceType {
+  CalDAV
+  GoogleCalendar
+}
+
+enum EventSourceType {
+  AdHoc
+  Integration
+  EventTemplate
+  ProcessItemAttachment
+  RecurringEventInstanceConversion
+  AppointmentBooking
+}
+
+enum EventState {
+  Active
+  Cancelled
+  Done
+}
+
+enum ProcessSourceType {
+  AdHoc
+  Integration
+  ProcessTemplate
+}
+
+enum ProcessState {
+  Active
+  Done
+  Cancelled
+}
+
+enum RecurringEventSourceType {
+  AdHoc
+  EventTemplate
+}
+
+enum RecurringEventState {
+  Active
+  Cancelled
+}
+
+enum TransparencyScope {
+  Public
+  Protected
+  Private
+}
+
+enum TrustedViewerEventTagAccess {
+  Allow
+  Deny
+}

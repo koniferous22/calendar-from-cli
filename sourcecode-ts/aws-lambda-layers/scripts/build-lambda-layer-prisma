@@ -1,0 +1,21 @@
+#!/bin/bash
+lambda_layer_name="prisma"
+project_path=$(realpath "$(dirname "$0")/../../..")
+lambda_layer_root="$project_path/setup-aws/.lambda-layers/$lambda_layer_name"
+zip_output="$project_path/setup-aws/.deploy/calendar_lambdaLayer_$lambda_layer_name.zip"
+echo "Cleaning up previous Lambda layer build"
+rm -rf "$lambda_layer_root"
+
+echo "Building Layer"
+# Trigger generating of prisma client
+yarn  --cwd "$project_path/sourcecode-ts" prisma:build:local
+mkdir -p "$lambda_layer_root/nodejs/node_modules/.prisma"
+cp -r "$project_path/sourcecode-ts/node_modules/.prisma/client" "$lambda_layer_root/nodejs/node_modules/.prisma"
+cp -r "$project_path/sourcecode-ts/node_modules/@prisma" "$lambda_layer_root/nodejs/node_modules"
+
+echo "Compressing into .zip format"
+# Changing directory to preserve relative paths, for correct lambda layer mapping
+rm -f "$zip_output"
+pushd "$lambda_layer_root" >/dev/null
+zip -r "$zip_output" "."
+popd >/dev/null

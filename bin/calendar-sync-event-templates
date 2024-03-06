@@ -1,0 +1,6 @@
+#!/usr/bin/sh
+
+export NODE_ENV=prod
+source "$AWS_CALENDAR_ADMINISTRATOR_ACCESS_KEYS_FILE"
+project_path=$(realpath "$(dirname "$0")/..")
+tsx "$project_path/sourcecode-ts/admin-scripts/sync-event-templates/src/index.ts" "$@"

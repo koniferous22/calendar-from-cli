@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // declaration = false ~> no emitting of .d.ts
+    "declaration": false,
+    // don't emit tsconfig.tsbuildinfo files
+    "incremental": false,
+    "noEmit": false,
+    "outDir": "./build"
+  },
+  "include": ["src"]
+}

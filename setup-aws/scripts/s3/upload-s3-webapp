@@ -1,0 +1,8 @@
+#!/usr/bin/sh
+set -euo pipefail
+
+# TODO - extract env variable
+website_s3_bucket="calendar-web-app-142de3ab08ef743d"
+project_path=$(realpath "$(dirname "$0")/../../..")
+dist_web_path="$project_path/sourcecode-ts/web/dist-serverless"
+aws s3 cp --recursive "$dist_web_path" "s3://$website_s3_bucket"

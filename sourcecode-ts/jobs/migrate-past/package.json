@@ -1,0 +1,25 @@
+{
+  "name": "@calendar-from-cli/job-migrate-past",
+  "version": "1.0.0",
+  "description": "Job module for transforming past database records",
+  "main": "build/index.js",
+  "repository": "https://github.com/koniferous22/calendar-from-cli",
+  "author": "koniferous22",
+  "license": "AGPL-3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build-tsc:serverless": "tsc -p tsconfig.build.serverless.json",
+    "build:serverless": "./scripts/build/build-serverless",
+    "run:dev": "dotenv -e ./env/.env.dev.local -- tsx src/index.ts"
+  },
+  "dependencies": {
+    "@calendar-from-cli/backend-lib": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "dotenv-cli": "^7.3.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

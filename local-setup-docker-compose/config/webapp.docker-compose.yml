@@ -1,0 +1,22 @@
+services:
+  db:
+    extends:
+      file: services.yml
+      service: db
+    volumes:
+       - db-data:/var/lib/postgresql/data
+  api-public:
+    extends:
+      file: services.yml
+      service: webapp-api-public
+    volumes:
+      - type: bind
+        source: ../../config
+        target: /config
+  webapp:
+    extends:
+      file: services.yml
+      service: webapp
+
+volumes:
+  db-data:

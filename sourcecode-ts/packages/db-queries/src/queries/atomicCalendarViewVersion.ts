@@ -1,0 +1,6 @@
+import { prisma } from '@calendar-from-cli/prisma'
+import { transactional } from './index.js'
+
+export const getLatestCalendarViewVersion = async () => transactional.getLatestCalendarViewVersion(prisma)
+
+export const incrementCalendarViewVersion = async () => transactional.incrementCalendarViewVersion(prisma)

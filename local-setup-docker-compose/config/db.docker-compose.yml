@@ -1,0 +1,10 @@
+services:
+  db:
+    extends:
+      file: services.yml
+      service: db
+    volumes:
+       - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

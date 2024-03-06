@@ -1,0 +1,28 @@
+{
+  "name": "@calendar-from-cli/calendar-utils",
+  "version": "1.0.0",
+  "description": "Utility library for calendar event utils",
+  "main": "build/index.js",
+  "type": "module",
+  "repository": "https://github.com/koniferous22/calendar-from-cli",
+  "author": "koniferous22",
+  "license": "AGPL-3.0",
+  "private": true,
+  "scripts": {
+    "build-cleanup": "rm -rf build && rm -rf *tsconfig.tsbuildinfo",
+    "build": "yarn build-cleanup && tsc",
+    "build:watch": "tsc -w",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@calendar-from-cli/validation-lib": "*",
+    "date-fns": "^2",
+    "date-fns-tz": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.3.3"
+  }
+}

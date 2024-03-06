@@ -1,0 +1,3 @@
+#!/usr/bin/sh
+
+aws lambda invoke --function-name calendar_jobCalendarCleanup -

@@ -1,0 +1,28 @@
+{
+  "name": "@calendar-from-cli/db-queries",
+  "version": "1.0.0",
+  "description": "Shared db lib for 'calendar-from-cli' apis",
+  "main": "build/index.js",
+  "repository": "https://github.com/koniferous22/calendar-from-cli",
+  "author": "koniferous22",
+  "license": "AGPL-3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build-cleanup": "rm -rf build && rm -rf *tsconfig.tsbuildinfo",
+    "build": "yarn build-cleanup && tsc",
+    "build:watch": "tsc -w"
+  },
+  "dependencies": {
+    "@calendar-from-cli/calendar-utils": "*",
+    "@calendar-from-cli/prisma": "*",
+    "@calendar-from-cli/validation-lib": "*",
+    "@prisma/client": "^5.8.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.7",
+    "dotenv-cli": "^7.3.0",
+    "typescript": "^5.3.3"
+  }
+}

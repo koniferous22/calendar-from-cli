@@ -1,0 +1,4 @@
+# Override global setting of ignoring 'build' directories
+!scripts/build
+
+!env/.env.dev.local

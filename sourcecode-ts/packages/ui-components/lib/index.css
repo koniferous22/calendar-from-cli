@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* adjust storybook styling by injecting styles to .storybook-root */
+
+/*
+Tailwind multiple themes though custom <html> tag attributes
+https://stackoverflow.com/questions/69150928/how-to-create-multiple-themes-using-tailwind-css
+*/
+@layer base {
+  html[data-theme='kenji'] {
+    /* Core colors
+    030902
+    168f0b (kenji)
+    */
+    /* CORE */
+    --theme-color-font: #34a12e;
+    --theme-color-font-tuple: 52, 161, 46;
+    --theme-color-font-disabled: #888888;
+    --theme-color-grid: #444444;
+    --theme-color-grid-contrast: #888888;
+    --theme-color-background: #030902;
+    --theme-color-background-contrast: #aaaaaa;
+    --theme-color-background-contrast-light: #333333;
+    --theme-color-item-main: #085d00;
+    --theme-color-item-comain: #0c4007;
+    --theme-color-item-glow: #0c4007;
+    --theme-color-background-section: #151515;
+    --theme-color-background-subsection: #1b1b1b;
+    --theme-color-background-component: #222222;
+    --theme-color-background-input: #444444;
+    --theme-color-gradient-shade1: 20, 103, 13;
+    --theme-color-gradient-shade2: 16, 83, 10;
+    --theme-color-gradient-shade3: 14, 66, 9;
+    --theme-color-gradient-shade4: 12, 54, 8;
+    --theme-color-gradient-shade5: 10, 46, 7;
+    background: var(--theme-color-background);
+    color: var(--theme-color-font) !important;
+    /* WARNING */
+    --theme-color-font-warning: #957c31;
+    --theme-color-background-warning: #473b17;
+    /* ERROR */
+    --theme-color-font-error: #824345;
+    --theme-color-background-error: #442223;
+  }
+
+  html[data-theme='yoghurt'] {
+    /* CORE */
+    --theme-color-font: #ff8b00;
+    --theme-color-font-tuple: 255, 139, 0;
+    --theme-color-font-disabled: #999999;
+    --theme-color-grid: #eeeeee;
+    --theme-color-grid-contrast: #aaaaaa;
+    --theme-color-background: #ffffff;
+    --theme-color-background-contrast: #ff8b00;
+    --theme-color-background-contrast-light: #ffe6c9;
+    --theme-color-item-main: #ffdeb3;
+    --theme-color-item-comain: #ffe3c2;
+    --theme-color-item-glow: #ffc078;
+    --theme-color-background-section: #ffdeb3;
+    --theme-color-background-subsection: #ffe3c2;
+    --theme-color-background-component: #ffefdb;
+    --theme-color-background-input: #fff7ee;
+    --theme-color-gradient-shade1: 255, 184, 99;
+    --theme-color-gradient-shade2: 255, 204, 143;
+    --theme-color-gradient-shade3: 255, 225, 189;
+    --theme-color-gradient-shade4: 255, 236, 214;
+    --theme-color-gradient-shade5: 255, 244, 230;
+    background: var(--theme-color-background);
+    color: var(--theme-color-font) !important;
+    /* WARNING */
+    --theme-color-font-warning: #b19036;
+    --theme-color-background-warning: #fff9ea;
+    /* ERROR */
+    --theme-color-font-error: #b13f36;
+    --theme-color-background-error: #ffeeee;
+  }
+
+  html[data-theme='lagoon'] {
+    /* CORE */
+    --theme-color-font: #00887b;
+    --theme-color-font-tuple: 0, 136, 123;
+    --theme-color-font-disabled: #999999;
+    --theme-color-grid: #eeeeee;
+    --theme-color-grid-contrast: #aaaaaa;
+    --theme-color-background: #ffffff;
+    --theme-color-background-contrast: #00887b;
+    --theme-color-background-contrast-light: #97ddd6;
+    --theme-color-item-main: #95cdc7;
+    --theme-color-item-comain: #adddd7;
+    --theme-color-item-glow: #5cbfb5;
+    --theme-color-background-section: #95cdc7;
+    --theme-color-background-subsection: #adddd7;
+    --theme-color-background-component: #cce4e1;
+    --theme-color-background-input: #e6f2f1;
+    --theme-color-gradient-shade1: 62, 172, 161;
+    --theme-color-gradient-shade2: 106, 194, 185;
+    --theme-color-gradient-shade3: 139, 209, 202;
+    --theme-color-gradient-shade4: 178, 230, 225;
+    --theme-color-gradient-shade5: 207, 241, 238;
+    background: var(--theme-color-background);
+    color: var(--theme-color-font) !important;
+    /* WARNING */
+    --theme-color-font-warning: #cfb14a;
+    --theme-color-background-warning: #fff2c6;
+    /* ERROR */
+    --theme-color-font-error: #b45078;
+    --theme-color-background-error: #ffd5e6;
+  }
+}
+
+@layer utilities {
+  .bg-striped {
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--theme-color-background-input),
+      var(--theme-color-background-input) 20px,
+      var(--theme-color-item-main) 20px,
+      var(--theme-color-item-main) 40px
+    );
+  }
+  .bg-highlighted-day {
+    background: radial-gradient(
+      circle,
+      rgba(var(--theme-color-gradient-shade1), 0.66) 5%,
+      rgba(var(--theme-color-gradient-shade2), 0.66) 67%,
+      rgba(var(--theme-color-gradient-shade3), 0.44) 83%,
+      rgba(var(--theme-color-gradient-shade3), 0.22) 100%
+    );
+  }
+  .bg-event {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--theme-color-gradient-shade1), 1) 0%,
+      rgba(var(--theme-color-gradient-shade2), 1) 50%,
+      rgba(var(--theme-color-gradient-shade3), 1) 100%
+    );
+  }
+  .bg-tooltip {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--theme-color-gradient-shade2), 1) 0%,
+      rgba(var(--theme-color-gradient-shade3), 1) 50%,
+      rgba(var(--theme-color-gradient-shade4), 1) 100%
+    );
+  }
+  .bg-event-past {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--theme-color-gradient-shade3), 1) 0%,
+      rgba(var(--theme-color-gradient-shade4), 1) 50%,
+      rgba(var(--theme-color-gradient-shade5), 1) 100%
+    );
+  }
+  .bg-progress-bar {
+    background: linear-gradient(
+      90deg,
+      rgba(var(--theme-color-font-tuple), 1) 0%,
+      rgba(var(--theme-color-font-tuple), 1) 99.5%,
+      rgba(var(--theme-color-font-tuple), 0) 100%
+    );
+  }
+  /* Inspiration: https://dev.to/derick1530/how-to-create-scrollable-element-in-tailwind-without-a-scrollbar-4mbd */
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}

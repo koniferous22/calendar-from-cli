@@ -1,0 +1,40 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-local
+dist-docker
+dist-serverless
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ┌───────────────────┐
+# │                   │
+# │ .env custom rules │
+# │                   │
+# └───────────────────┘ 
+
+!env/.env.dev.local
+!env/.env.dev.docker
+# Serverless .env required only for web app bundle before s3 upload
+# No sensitive information included
+!env/.env.prod.serverless
+

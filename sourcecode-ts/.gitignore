@@ -1,0 +1,20 @@
+# tsc output dirs
+dist
+dist-local
+dist-docker
+dist-serverless
+build
+build-docker
+build-serverless
+
+# un-gitignore `scripts/build` folders that are used for package/api/job build scripts
+!scripts/build
+
+# tsc buildinfo from incremental builds
+*tsconfig.tsbuildinfo
+
+# node_modules
+
+node_modules
+
+.config

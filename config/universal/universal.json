@@ -1,0 +1,114 @@
+{
+  "timezone": "Europe/Prague",
+  "inputValidation": {
+    "api": {
+      "calendarList": {
+        "lowerLimit": 1970,
+        "maxYearsAhead": 50
+      },
+      "calendarItemSchedule": {
+        "maxDurationMinutes": 47520,
+        "schedulingGracePeriodMillis": 60000
+      }
+    },
+    "objectCountLimits": {
+      "processTemplate": {
+        "maxProcessItemAttachments": 100
+      },
+      "recurringEvent": {
+        "maxRecurringEvents": 200
+      }
+    },
+    "objectFieldLimits": {
+      "recurringEvent": {
+        "periodLimits": {
+          "maxDaily": 4000,
+          "maxWeekly": 500,
+          "maxMonthly": 120,
+          "maxYearly": 10
+        }
+      },
+      "processTemplate": {
+        "offsetGapLimits": {
+          "maxHourGap": 168,
+          "maxDayGap": 400,
+          "maxWeekGap": 60,
+          "maxMonthGap": 25,
+          "maxYearGap": 3
+        }
+      }
+    },
+    "passwordConstraints": {
+      "minPasswordChars": 8,
+      "shouldContainUppercase": true,
+      "shouldContainLowercase": true,
+      "shouldContainDigits": true,
+      "shouldContainSpecialChars": true,
+      "specialChars": {
+        "characters": "!@#$%^&*()_+{}[]:;<>,.?~/-",
+        "testingRegex": "[!@#$%^&*()_+{}\\[\\]:;<>,.?~/-]"
+      }
+    },
+    "stringLimits": {
+      "event": {
+        "maxTitleLength": 250,
+        "maxDescriptionLength": 5000
+      },
+      "eventTemplate": {
+        "maxEventTemplateAliasLength": 100
+      },
+      "eventTag": {
+        "maxEventTagAliasLength": 100
+      },
+      "process": {
+        "maxTitleLength": 250,
+        "maxDescriptionLength": 5000
+      },
+      "processTemplate": {
+        "maxProcessTemplateAliasLength": 100
+      },
+      "recurringEvent": {
+        "maxTitleLength": 250,
+        "maxDescriptionLength": 5000
+      },
+      "trustedViewer": {
+        "maxTrustedViewerAliasLength": 100
+      }
+    },
+    "eventSourceTypes": {
+      "updatingFlags": {
+        "shouldAllowChangingAppointmentEvents": false,
+        "shouldAllowChangingIntegrationEvents": false
+      }
+    }
+  },
+  "dbContentDefaults": {
+    "scheduleEvent": {
+      "fallbackPublicTitle": "BUSY",
+      "fallbackPublicDescription": {
+        "content": "BUSY",
+        "format": "Plaintext"
+      }
+    },
+    "scheduleRecurringEvent": {
+      "fallbackPublicTitle": "BUSY",
+      "fallbackPublicDescription": {
+        "content": "BUSY",
+        "format": "Plaintext"
+      }
+    },
+    "scheduleProcess": {
+      "fallbackPublicTitle": "BUSY",
+      "fallbackPublicDescription": {
+        "content": "BUSY",
+        "format": "Plaintext"
+      }
+    }
+  },
+  "defaultWebAppSettings": {
+    "theme": "kenji",
+    "secretLinkText": "Secret Link",
+    "homeRedirect": "dayLaneView",
+    "smHomeRedirect": "weekLaneView"
+  }
+}

@@ -1,0 +1,10 @@
+# .env file formats
+
+.env
+.env.dev.*
+.env.prod.*
+
+# Production config
+
+config.prod.json
+config.prod.*.json

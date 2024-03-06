@@ -1,0 +1,7 @@
+#!/usr/bin/sh
+
+export NODE_ENV=prod
+export EDITOR=vim
+source "$AWS_CALENDAR_ADMINISTRATOR_ACCESS_KEYS_FILE"
+project_path=$(realpath "$(dirname "$0")/..")
+tsx "$project_path/sourcecode-ts/cli/src/index.ts"

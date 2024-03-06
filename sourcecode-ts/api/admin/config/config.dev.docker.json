@@ -1,0 +1,39 @@
+{
+  "jobs": {
+    "migratePast": {
+      "enabledMiddlewareTriggers": {
+        "calendarRouter": {
+          "calendarListProcedure": true
+        }
+      }
+    },
+    "calendarCleanup": {
+      "enabledMiddlewareTriggers": {
+        "eventRouter": {
+          "eventUpdateProcedure": false
+        },
+        "eventTagRouter": {
+          "eventTagUpdateProcedure": false
+        },
+        "eventTemplateRouter": {
+          "eventTemplateUpdateProcedure": false,
+          "eventTemplateScheduleProcedure": false
+        },
+        "processRouter": {
+          "processUpdateProcedure": false
+        },
+        "processTemplateRouter": {
+          "processTemplateUpdateProcedure": false,
+          "processTemplateScheduleProcedure": false
+        },
+        "recurringEventRouter": {
+          "recurringEventUpdateProcedure": false
+        },
+        "trustedViewerRouter": {
+          "trustedViewerUpdateProcedure": false
+        }
+      },
+      "enabledEndpointTrigger": true
+    }
+  }
+}

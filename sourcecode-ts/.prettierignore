@@ -1,0 +1,14 @@
+**/build
+**/build-docker
+**/build-serverless
+**/dist
+**/dist-local
+**/dist-docker
+**/dist-serverless
+**/env
+**/storybook-static
+**/*.prisma
+**/*.html
+**/*.tsbuildinfo
+**/.pnp.cjs
+**/.pnp.loader.mjs

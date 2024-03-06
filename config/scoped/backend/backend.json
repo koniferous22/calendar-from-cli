@@ -1,0 +1,8 @@
+{
+  "recurringEventsSync": {
+    "automaticUpdateForUnaffected": {
+      "recurringEvents": true,
+      "recurringEventInstances": true
+    }
+  }
+}

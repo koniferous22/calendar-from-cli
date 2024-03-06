@@ -1,0 +1,52 @@
+{
+  "name": "@calendar-from-cli/api-public",
+  "version": "1.0.0",
+  "description": "Public API for calendar page",
+  "main": "bundle/index.js",
+  "repository": "https://github.com/koniferous22/calendar-from-cli",
+  "author": "koniferous22",
+  "license": "AGPL-3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build-tsc:docker": "tsc -p tsconfig.build.docker.json",
+    "build-tsc:serverless": "tsc -p tsconfig.build.serverless.json",
+    "build:docker": "./scripts/build/build-docker",
+    "build:serverless": "./scripts/build/build-serverless",
+    "config:preprocess:local": "dotenv -e ./env/.env.dev.local tsx scripts/config/generateMergedConfig.ts",
+    "config:preprocess:docker": "dotenv -e ./env/.env.dev.docker tsx scripts/config/generateMergedConfig.ts",
+    "config:preprocess:serverless": "dotenv -e ./env/.env.prod.serverless tsx scripts/config/generateMergedConfig.ts",
+    "dev": "yarn config:preprocess:local && dotenv -e ./env/.env.dev.local -- tsx watch ./src/apiLocal.ts",
+    "start:docker": "dotenv -e ./env/.env.dev.docker -- node ./build-docker/src/apiLocal.js"
+  },
+  "dependencies": {
+    "@calendar-from-cli/backend-lib": "*",
+    "@calendar-from-cli/calendar-utils": "*",
+    "@calendar-from-cli/common-config": "*",
+    "@calendar-from-cli/db-queries": "*",
+    "@calendar-from-cli/secrets": "*",
+    "@calendar-from-cli/validation-lib": "*",
+    "@trpc/server": "^10.45.1",
+    "body-parser": "^1.20.2",
+    "connect": "^3.7.0",
+    "cookie": "^0.6.0",
+    "cors": "^2.8.5",
+    "date-fns": "^2",
+    "date-fns-tz": "^2.0.0",
+    "lodash": "^4.17.21",
+    "serverless-http": "^3.2.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/connect": "^3.4.38",
+    "@types/cookie": "^0.6.0",
+    "@types/cors": "^2.8.17",
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^20.11.6",
+    "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.3.0",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.3"
+  }
+}

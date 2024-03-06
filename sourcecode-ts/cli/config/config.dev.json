@@ -1,0 +1,7 @@
+{
+  "apiAdminUrl": "http://localhost:3000",
+  "webAppDomain": "http://localhost:3002",
+  "apiAdminFetchingOptions": {
+    "apiAdminRuntime": "docker"
+  }
+}

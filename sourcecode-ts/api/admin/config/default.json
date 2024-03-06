@@ -1,0 +1,50 @@
+{
+  "server": {
+    "port": 3000,
+    "stderrLogging": false,
+    "bodyParserMiddleware": false
+  },
+  "bcryptjs": {
+    "saltRounds": 11
+  },
+  "jobs": {
+    "migratePast": {
+      "jobSettings": {
+        "shouldCheckForCorruptDbState": true
+      },
+      "enabledMiddlewareTriggers": {
+        "calendarRouter": {
+          "calendarListProcedure": false
+        }
+      }
+    },
+    "calendarCleanup": {
+      "enabledMiddlewareTriggers": {
+        "eventRouter": {
+          "eventUpdateProcedure": false
+        },
+        "eventTagRouter": {
+          "eventTagUpdateProcedure": false
+        },
+        "eventTemplateRouter": {
+          "eventTemplateUpdateProcedure": false,
+          "eventTemplateScheduleProcedure": false
+        },
+        "processRouter": {
+          "processUpdateProcedure": false
+        },
+        "processTemplateRouter": {
+          "processTemplateUpdateProcedure": false,
+          "processTemplateScheduleProcedure": false
+        },
+        "recurringEventRouter": {
+          "recurringEventUpdateProcedure": false
+        },
+        "trustedViewerRouter": {
+          "trustedViewerUpdateProcedure": false
+        }
+      },
+      "enabledEndpointTrigger": false
+    }
+  }
+}

@@ -1,0 +1,34 @@
+#!/usr/bin/sh
+set -euo pipefail
+
+lambda_layer_name="libs"
+project_path=$(realpath "$(dirname "$0")/../../..")
+lambda_layer_root="$project_path/setup-aws/.lambda-layers/$lambda_layer_name"
+zip_output="$project_path/setup-aws/.deploy/calendar_lambdaLayer_$lambda_layer_name.zip"
+echo "Cleaning up previous Lambda layer build"
+rm -rf "$lambda_layer_root"
+
+echo "Building Layer"
+mkdir -p "$lambda_layer_root/nodejs/node_modules/@calendar-from-cli"
+
+function copy_package() {
+    local layer_package_path="$lambda_layer_root/nodejs/node_modules/@calendar-from-cli/$1"
+    mkdir -p "$layer_package_path"
+    cp -r "$project_path/sourcecode-ts/packages/$1/package.json" "$layer_package_path"
+    cp -r "$project_path/sourcecode-ts/packages/$1/build" "$layer_package_path"
+}
+
+copy_package "backend-lib"
+copy_package "calendar-utils"
+copy_package "common-config"
+copy_package "db-queries"
+copy_package "prisma"
+copy_package "secrets"
+copy_package "validation-lib"
+
+echo "Compressing into .zip format"
+# Changing directory to preserve relative paths, for correct lambda layer mapping
+rm -f "$zip_output"
+pushd "$lambda_layer_root" >/dev/null
+zip -r "$zip_output" "."
+popd >/dev/null

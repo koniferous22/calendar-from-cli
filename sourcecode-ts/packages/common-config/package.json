@@ -1,0 +1,31 @@
+{
+  "name": "@calendar-from-cli/common-config",
+  "version": "1.0.0",
+  "description": "Common config for 'calendar-from-cli' apps",
+  "main": "build/index.js",
+  "repository": "https://github.com/koniferous22/calendar-from-cli",
+  "author": "koniferous22",
+  "license": "AGPL-3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build-cleanup": "rm -rf build && rm -rf *tsconfig.tsbuildinfo",
+    "build": "yarn build-cleanup && tsc",
+    "build:watch": "tsc -w"
+  },
+  "dependencies": {
+    "@calendar-from-cli/validation-lib": "*",
+    "@prisma/client": "^5.8.1",
+    "lodash": "^4.17.21",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^20.11.5",
+    "typescript": "^5.3.3"
+  },
+  "exports": {
+    "browser": "./build/index-browser.js",
+    "default": "./build/index.js"
+  }
+}

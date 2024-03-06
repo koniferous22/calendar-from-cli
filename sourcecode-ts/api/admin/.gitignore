@@ -1,0 +1,8 @@
+# Override global setting of ignoring 'build' directories
+!scripts/build
+
+!env/.env.dev.local
+!env/.env.dev.docker
+# Serverless .env required only for api build before deploy
+# No sensitive information included
+!env/.env.prod.serverless
