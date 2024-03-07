@@ -347,7 +347,7 @@ export const CalendarLane = ({ laneStart, laneEnd, events, renderingOptions, sho
             </div>
           )
         })}
-      {!isLoading && now >= laneStart && now <= laneEnd && (
+      {now >= laneStart && now <= laneEnd && (
         <div
           className={'absolute left-0 w-full'}
           style={{
